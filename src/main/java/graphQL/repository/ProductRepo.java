@@ -1,5 +1,13 @@
 package graphQL.repository;
 
-public class ProductRepo {
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import graphQL.entity.Product;
+
+public interface ProductRepo extends JpaRepository<Product, Long> {
+
+	List<Product> findByCategoryId(Long categoryId);
 
 }

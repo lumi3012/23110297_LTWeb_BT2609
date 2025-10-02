@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý Sản phẩm</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h2 { color: green; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #2e7d32; color: white; }
+    input[type=text], input[type=number] {
+      padding: 5px;
+      margin: 5px;
+      width: 200px;
+    }
+    button { padding: 5px 10px; margin: 5px; }
+    .btn-green { background-color: #2e7d32; color: white; border: none; }
+    .btn-red { background-color: #c62828; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <h2>Quản lý Sản phẩm</h2>
+
+  <div>
+    <input id="title" placeholder="Tên sản phẩm">
+    <input id="quantity" type="number" placeholder="Số lượng">
+    <input id="desc" placeholder="Mô tả">
+    <input id="price" type="number" placeholder="Giá" step="0.01">
+    <input id="userId" type="number" placeholder="User ID">
+    <button class="btn-green" onclick="addProduct()">Thêm sản phẩm</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Tên</th><th>Số lượng</th><th>Mô tả</th><th>Giá</th><th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody id="productTable"></tbody>
+  </table>
+
+<script>
+function loadProducts() {
+  const query = `{ getProductsSortedByPrice { id title quantity desc price } }`;
+  $.post("/graphql", { query }, function(res) {
+    const products = res.data.getProductsSortedByPrice;
+    let html = "";
+    products.forEach(p => {
+      html += `<tr>
+        <td>${p.id}</td>
+        <td>${p.title}</td>
+        <td>${p.quantity}</td>
+        <td>${p.desc}</td>
+        <td>${p.price}</td>
+        <td>
+          <button class="btn-red" onclick="deleteProduct(${p.id})">Xoá</button>
+        </td>
+      </tr>`;
+    });
+    $("#productTable").html(html);
+  });
+}
+
+function addProduct() {
+  const query = `
+    mutation {
+      addProduct(
+        title: "${$("#title").val()}",
+        quantity: ${$("#quantity").val()},
+        desc: "${$("#desc").val()}",
+        price: ${$("#price").val()},
+        userId: ${$("#userId").val()}
+      ) { id }
+    }`;
+  $.post("/graphql", { query }, function() {
+    loadProducts();
+    $("input").val(""); // clear form
+  });
+}
+
+function deleteProduct(id) {
+  const query = `mutation { deleteProduct(id: ${id}) }`;
+  $.post("/graphql", { query }, function() {
+    loadProducts();
+  });
+}
+
+loadProducts();
+</script>
+</body>
+</html>

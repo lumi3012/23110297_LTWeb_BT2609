@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>GraphQL AJAX Demo</title></head>
+<body>
+  <h1>Products (sorted by price)</h1>
+  <div id="list"></div>
+
+<script>
+async function loadProducts() {
+  const query = `{
+    getProductsSortedByPrice {
+      id
+      title
+      price
+      category { name }
+      user { fullname email }
+    }
+  }`;
+  const res = await fetch('/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query })
+  });
+  const json = await res.json();
+  const arr = json.data.getProductsSortedByPrice;
+  const div = document.getElementById('list');
+  div.innerHTML = arr.map(p => `<div style="border:1px solid #ddd;padding:8px;margin:6px;">
+    <b>${p.title}</b> — $${p.price} — Category: ${p.category?.name || '-'} — Seller: ${p.user?.fullname || '-'}
+  </div>`).join('');
+}
+loadProducts();
+</script>
+</body>
+</html>
