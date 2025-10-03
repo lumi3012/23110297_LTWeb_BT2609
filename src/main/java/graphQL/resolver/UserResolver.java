@@ -13,17 +13,20 @@ import graphQL.service.UserService;
 @Component
 public class UserResolver implements GraphQLQueryResolver {
 	@Autowired
-    private UserService userService;
+	private UserService userService;
 
-    public List<User> getAllUsers() {
-        return userService.findAll();
-    }
 
-    public User addUser(String fullname, String username, String password, String email, String phone) {
-        return userService.addUser(fullname, username, password, email, phone);
-    }
+	public List<User> getAllUsers() {
+	return userService.findAll();
+	}
 
-    public boolean deleteUser(int id) {
-        return userService.deleteUser(id);
-    }
+
+	public User addUser(String fullname, String username, String password, String email, String phone, String role, String avatar) {
+	return userService.addUser(fullname, username, password, email, phone, role, avatar);
+	}
+
+
+	public boolean deleteUser(int id) {
+	return userService.deleteUser(id);
+	}
 }

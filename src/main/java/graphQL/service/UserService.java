@@ -23,13 +23,14 @@ public class UserService {
 	}
 
 	public User addUser(User u) {
-		User u = new User();
-        u.setFullname(fullname);
-        u.setUsername(username);
-        u.setPassword(password);
-        u.setEmail(email);
-        u.setPhone(phone);
-        return userRepo.save(u);
+		u.setFullname(fullname);
+		u.setUsername(username);
+		u.setPassword(password);
+		u.setEmail(email);
+		u.setPhone(phone);
+		u.setRole(role);
+		u.setAvatar(avatar);
+		return userRepo.save(u);
 	}
 
 	public boolean deleteUser(int id) {

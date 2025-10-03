@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import graphQL.entity.Category;
 import graphQL.entity.Product;
 import graphQL.entity.User;
+import graphQL.repository.CateRepo;
 import graphQL.repository.ProductRepo;
 import graphQL.repository.UserRepo;
 
@@ -20,11 +22,14 @@ public class ProductService {
 	@Autowired
 	private UserRepo userRepo;
 
+	@Autowired
+	private CateRepo cateRepo;
+
 	public List<Product> findAllSortedByPrice() {
 		return productRepo.findAll().stream().sorted(Comparator.comparing(Product::getPrice)).toList();
 	}
 
-	public Product addProduct(String title, int quantity, String desc, float price, int userId) {
+	public Product addProduct(String title, int quantity, String desc, float price, int userId, Long categoryId) {
 		Product p = new Product();
 		p.setTitle(title);
 		p.setQuantity(quantity);
@@ -32,7 +37,10 @@ public class ProductService {
 		p.setPrice(price);
 
 		User user = userRepo.findById(userId).orElse(null);
+		Category cate = cateRepo.findById(categoryId).orElse(null);
+
 		p.setUser(user);
+		p.setCategory(cate);
 
 		return productRepo.save(p);
 	}
